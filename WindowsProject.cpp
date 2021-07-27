@@ -140,9 +140,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE: 
         {
-        hEdit = CreateWindowW(L"Edit", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER,
+        hEdit = CreateWindowW(L"Edit", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL,
             50, 50, 250, 25, hWnd, (HMENU)1001, hInst, nullptr);
-        hBtn = CreateWindowW(L"Button", L"设置", WS_CHILD | WS_VISIBLE ,
+        hBtn = CreateWindowW(L"Button", L"选择文件", WS_CHILD | WS_VISIBLE ,
             300, 50, 80, 25, hWnd, (HMENU)1002, hInst, nullptr);
         CreateWindowW(L"Button", L"以system启动程序", WS_CHILD | WS_VISIBLE,
             150, 100, 150, 25, hWnd, (HMENU)1003, hInst, nullptr);
