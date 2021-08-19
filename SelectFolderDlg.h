@@ -2,18 +2,16 @@
 
 #pragma once
 
-#include<windows.h>
-#include <atlstr.h>
+//#include<windows.h>
 #include <shlobj.h>
 #include "commdlg.h"
-#include <string>
 
 class CSelectFolderDlg {
 public:
     //创建一个选择文件夹的对话框，返回所选路径  
-    static CString SelectFolder() {
+    static char* SelectFolder() {
         TCHAR       szFolderPath[MAX_PATH] = { 0 };
-        CString     strFolderPath = "";
+        char     strFolderPath[MAX_PATH] = {0};
 
         BROWSEINFO      sInfo;
         ::ZeroMemory(&sInfo, sizeof(BROWSEINFO));
@@ -40,8 +38,7 @@ public:
         if (lpidlBrowse != NULL) {
             // 取得文件夹名  
             if (::SHGetPathFromIDList(lpidlBrowse, szFolderPath)) {
-                strFolderPath = szFolderPath;
-                
+                memcpy(strFolderPath, szFolderPath,sizeof(szFolderPath));
             }
         }
         if (lpidlBrowse != NULL) {
@@ -49,21 +46,21 @@ public:
         }
         return strFolderPath;
     }
-    static CString SelectFile() {
+    //创建一个选择文件的对话框，返回所选路径  
+    static char* SelectFile() {
 
         OPENFILENAME ofn;
-        char szFile[300];
+        char szFile[MAX_PATH] = {0};
 
         ZeroMemory(&ofn, sizeof(ofn));
         ofn.lStructSize = sizeof(ofn);
         ofn.hwndOwner = NULL;
         ofn.lpstrFile = szFile;
-        ofn.lpstrFile[0] = '\0';
         LPTSTR        lpstrCustomFilter;
         DWORD         nMaxCustFilter;
         ofn.nFilterIndex = 1;
         LPTSTR        lpstrFile;
-        ofn.nMaxFile = sizeof(szFile);
+        ofn.nMaxFile = MAX_PATH;
         ofn.lpstrFilter = "ALL\0*.*\0Text\0*.TXT\0";
         ofn.lpstrFileTitle = NULL;
         ofn.nMaxFileTitle = 0;
@@ -71,21 +68,16 @@ public:
 
         ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
-        CString path_image = "";
         if (GetOpenFileName(&ofn)) {//LPWSTR
-            //std::string strTemp = std::Lpcwstr2String(ofn.lpstrFile);
-            path_image = ofn.lpstrFile;
-            //MessageBox(NULL, path_image, path_image, 0);//输出获得的路径
-            return path_image;
+            return ofn.lpstrFile;
         }
         else {
-            return "";
+            return szFile;
         }
     }
 
     void FolderCallBack() {
 
     }
-
 };
 

@@ -85,16 +85,6 @@ public:
 
 	static bool CreateProcessFromParent(char* lpPath)
 	{
-		/*
-		if (!IsProcessRunAsAdmin()) {
-			RunAsAdmin();
-			exit(0);
-		}
-		
-		char lpPath[256];
-		cout << "请输入启动程序路径：";
-		cin >> lpPath;
-		*/
 		
 		char str[][20] = { "winlogon.exe","lsass.exe" };
 		DWORD pid = 0;
@@ -108,9 +98,10 @@ public:
 
 		//程序提权
 		if (!EnableDebugPriv()) {
-			cout << "提权失败 !!!" << endl;
+			cout << "EnableDebugPriv  Failed !" << endl;
 			return false;
 		}
+
 
 		//创建启动信息结构体
 		STARTUPINFOEXA si;
@@ -123,7 +114,7 @@ public:
 
 		//已全部权限打开services.exe 进程
 		HANDLE handle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
-		printf("OpenProcess failed ! (%d). \n ", GetLastError());
+		//printf("OpenProcess failed ! (%d). \n ", GetLastError());
 
 		SIZE_T lpSize = 0;
 		InitializeProcThreadAttributeList(NULL, 1, 0, &lpSize);
