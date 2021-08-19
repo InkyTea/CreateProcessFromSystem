@@ -9,9 +9,9 @@
 class CSelectFolderDlg {
 public:
     //创建一个选择文件夹的对话框，返回所选路径  
-    static char* SelectFolder() {
+    static string SelectFolder() {
         TCHAR       szFolderPath[MAX_PATH] = { 0 };
-        char     strFolderPath[MAX_PATH] = {0};
+        string     strFolderPath;
 
         BROWSEINFO      sInfo;
         ::ZeroMemory(&sInfo, sizeof(BROWSEINFO));
@@ -38,7 +38,7 @@ public:
         if (lpidlBrowse != NULL) {
             // 取得文件夹名  
             if (::SHGetPathFromIDList(lpidlBrowse, szFolderPath)) {
-                memcpy(strFolderPath, szFolderPath,sizeof(szFolderPath));
+                strFolderPath = szFolderPath;
             }
         }
         if (lpidlBrowse != NULL) {
@@ -47,9 +47,10 @@ public:
         return strFolderPath;
     }
     //创建一个选择文件的对话框，返回所选路径  
-    static char* SelectFile() {
+    static string SelectFile() {
 
         OPENFILENAME ofn;
+        string     strFilePath;
         char szFile[MAX_PATH] = {0};
 
         ZeroMemory(&ofn, sizeof(ofn));
@@ -69,10 +70,11 @@ public:
         ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
         if (GetOpenFileName(&ofn)) {//LPWSTR
-            return ofn.lpstrFile;
+            strFilePath = ofn.lpstrFile;
+            return strFilePath;
         }
         else {
-            return szFile;
+            return strFilePath;
         }
     }
 

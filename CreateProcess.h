@@ -59,21 +59,47 @@ class CreateProcess {
 
 public:
 
+	static string GetCurrProcessUser() {
+		string strName;
+		DWORD dwSize = MAX_PATH;
+		TCHAR* pszName = new TCHAR[dwSize];
+		if (GetUserName(pszName, &dwSize)) {
+			strName = pszName;
+		}
+		delete[] pszName;
+		return strName;
+	}
+
+	static bool IsProcessRunAsSystem() {
+		BOOL bIsLocalSystem = FALSE;
+		PSID psidLocalSystem;
+		SID_IDENTIFIER_AUTHORITY ntAuthority = SECURITY_NT_AUTHORITY;
+
+		BOOL bSuccess = AllocateAndInitializeSid(&ntAuthority, 1, SECURITY_LOCAL_SYSTEM_RID,
+			0, 0, 0, 0, 0, 0, 0, &psidLocalSystem);
+		if (bSuccess) {
+			bSuccess = CheckTokenMembership(0, psidLocalSystem, &bIsLocalSystem);
+			FreeSid(psidLocalSystem);
+		}
+		return bIsLocalSystem;
+	}
+
 	static bool IsProcessRunAsAdmin() {
+		BOOL bIsLocalAdmin = FALSE;
 		SID_IDENTIFIER_AUTHORITY NtAuthority = SECURITY_NT_AUTHORITY;
 		PSID AdministratorsGroup;
-		BOOL b = AllocateAndInitializeSid(
+		BOOL bSuccess = AllocateAndInitializeSid(
 			&NtAuthority,
 			2,
 			SECURITY_BUILTIN_DOMAIN_RID,
 			DOMAIN_ALIAS_RID_ADMINS,
 			0, 0, 0, 0, 0, 0,
 			&AdministratorsGroup);
-		if (b) {
-			CheckTokenMembership(NULL, AdministratorsGroup, &b);
+		if (bSuccess) {
+			CheckTokenMembership(NULL, AdministratorsGroup, &bIsLocalAdmin);
 			FreeSid(AdministratorsGroup);
 		}
-		return b == TRUE;
+		return bIsLocalAdmin;
 	}
 
 	static int RunAsAdmin() {
@@ -152,7 +178,7 @@ public:
 			CloseHandle(pi.hThread);
 
 			DeleteProcThreadAttributeList(AttributeList);
-			delete pTemp;
+			delete []pTemp;
 
 			cout << "CreateProcessAsUserA Succeed ! ProcessId: " << pi.dwProcessId << endl;
 			return true;
@@ -162,7 +188,7 @@ public:
 			cout << "CreateProcessAsUserA Failed ! Error:" << GetLastError() << endl;
 		}
 		DeleteProcThreadAttributeList(AttributeList);
-		delete pTemp;
+		delete []pTemp;
 
 		return false;
 	}

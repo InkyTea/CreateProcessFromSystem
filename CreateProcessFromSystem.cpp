@@ -38,7 +38,6 @@ INT_PTR CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
             case ID_OK:
                 {
-                    //DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                     HWND hEdit = FindWindowEx(hWnd, NULL, "Edit", NULL);
                     char filePath[MAX_PATH] = { 0 };
                     if (hEdit != nullptr) {
@@ -50,14 +49,9 @@ INT_PTR CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             case ID_SELECT:
                 {
                     HWND hEdit = FindWindowEx(hWnd,NULL,"Edit", NULL);
-                    char* temFilePath = CSelectFolderDlg::SelectFile();
-                    int len = strlen(temFilePath);
-                    char filePath[MAX_PATH] = {0};
-                    memcpy(filePath, temFilePath, len);
-                    //char* strLogMsg1 = strLogMsg;0x00d7f0d8 "H:\\ali213pk_6.36\\ali213Pk.exe"
-                   // MessageBox(NULL, strLogMsg, strLogMsg, 0);//输出获得的路径
+                    string filePath = CSelectFolderDlg::SelectFile();
                     if (hEdit != nullptr) {
-                        SetWindowText(hEdit, filePath);
+                        SetWindowText(hEdit, filePath.c_str());
                     }
                     
                     break;
